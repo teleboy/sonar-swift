@@ -117,21 +117,10 @@ public class LizardReportParser {
                 NodeList values = itemElement.getElementsByTagName(VALUE);
                 if (FILE_MEASURE.equalsIgnoreCase(type)) {
                     InputFile inputFile = getFile(name);
-                    try {
-                        addComplexityFileMeasures(inputFile, values);
-                    } catch (Exception e) {
-                        if (inputFile != null) {
-                            LOGGER.debug("inputFile passed: " + inputFile.toString());
-                        } else {
-                            LOGGER.debug("inputFile null.");
-                        }
-                        if (values != null) {
-                            LOGGER.debug("values: " + values.toString() );
-                        } else {
-                            LOGGER.debug("values missing");
-                        }
-                        LOGGER.debug("unable to create complexity " + e.getMessage());
-                    }
+                    // the file could be excluded from Sonar analysis
+                    // hence not found in the filesystem
+                    if (inputFile == null) { continue; }
+                    addComplexityFileMeasures(inputFile, values);
                 } else if (FUNCTION_MEASURE.equalsIgnoreCase(type)) {
                     addComplexityFunctionMeasures(new SwiftFunction(0,name), values);
                 }
