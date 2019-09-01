@@ -117,7 +117,21 @@ public class LizardReportParser {
                 NodeList values = itemElement.getElementsByTagName(VALUE);
                 if (FILE_MEASURE.equalsIgnoreCase(type)) {
                     InputFile inputFile = getFile(name);
-                    addComplexityFileMeasures(inputFile, values);
+                    try {
+                        addComplexityFileMeasures(inputFile, values);
+                    } catch (Exception e) {
+                        if (inputFile != null) {
+                            LOGGER.debug("inputFile passed: " + inputFile.toString());
+                        } else {
+                            LOGGER.debug("inputFile null.");
+                        }
+                        if (values != null) {
+                            LOGGER.debug("values: " + values.toString() );
+                        } else {
+                            LOGGER.debug("values missing");
+                        }
+                        LOGGER.debug("unable to create complexity " + e.getMessage());
+                    }
                 } else if (FUNCTION_MEASURE.equalsIgnoreCase(type)) {
                     addComplexityFunctionMeasures(new SwiftFunction(0,name), values);
                 }
@@ -171,7 +185,6 @@ public class LizardReportParser {
 
     private void addComplexityFileMeasures(InputFile component, NodeList values) {
         LOGGER.debug("File measures for {}",component.toString());
-        try {
             int complexity = Integer.parseInt(values.item(cyclomaticComplexityIndex).getTextContent());
 
             context.<Integer>newMeasure()
@@ -193,9 +206,6 @@ public class LizardReportParser {
                     .forMetric(CoreMetrics.LINES)
                     .withValue(numberOfLines)
                     .save();
-        } catch (Exception e) {
-            LOGGER.debug("unable to create complexity " + e.getMessage());
-        }
     }
 
     private void addComplexityFunctionMeasures(InputComponent component, NodeList values) {
