@@ -171,27 +171,31 @@ public class LizardReportParser {
 
     private void addComplexityFileMeasures(InputFile component, NodeList values) {
         LOGGER.debug("File measures for {}",component.toString());
-        int complexity = Integer.parseInt(values.item(cyclomaticComplexityIndex).getTextContent());
+        try {
+            int complexity = Integer.parseInt(values.item(cyclomaticComplexityIndex).getTextContent());
 
-        context.<Integer>newMeasure()
-            .on(component)
-            .forMetric(CoreMetrics.COMPLEXITY)
-            .withValue(complexity)
-            .save();
+            context.<Integer>newMeasure()
+                    .on(component)
+                    .forMetric(CoreMetrics.COMPLEXITY)
+                    .withValue(complexity)
+                    .save();
 
-        int numberOfFunctions = Integer.parseInt(values.item(functionCountIndex).getTextContent());
-        context.<Integer>newMeasure()
-            .on(component)
-            .forMetric(CoreMetrics.FUNCTIONS)
-            .withValue(numberOfFunctions)
-            .save();
+            int numberOfFunctions = Integer.parseInt(values.item(functionCountIndex).getTextContent());
+            context.<Integer>newMeasure()
+                    .on(component)
+                    .forMetric(CoreMetrics.FUNCTIONS)
+                    .withValue(numberOfFunctions)
+                    .save();
 
-        int numberOfLines = Integer.parseInt(values.item(lineCountIndex).getTextContent());
-        context.<Integer>newMeasure()
-            .on(component)
-            .forMetric(CoreMetrics.LINES)
-            .withValue(numberOfLines)
-            .save();
+            int numberOfLines = Integer.parseInt(values.item(lineCountIndex).getTextContent());
+            context.<Integer>newMeasure()
+                    .on(component)
+                    .forMetric(CoreMetrics.LINES)
+                    .withValue(numberOfLines)
+                    .save();
+        } catch (Exception e) {
+            LOGGER.debug("unable to create complexity " + e.getMessage());
+        }
     }
 
     private void addComplexityFunctionMeasures(InputComponent component, NodeList values) {
